@@ -1,49 +1,100 @@
-$(document).ready(function() {
-    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || []
-    const listaElement = $("#lista")
-    const totalElement = $("#total")
+$(document).ready(function () {
+    const carrinho = JSON.parse(localStorage.getItem("carrinho")) || [];
+    const listaElement = $("#lista");
+    const totalElement = $("#total");
 
-    function exibirCarrinho(){
-        listaElement.empty()
-        let totalPreço = 0
+    function exibirCarrinho() {
+        listaElement.empty();
 
-        $.each(carrinho, function(index, item){
-            const listItem = $("<li>").text(`${item.desc} - Preço: $5(item.preço.toFixed(2)}`)
-            const removeButton = $("<button>").text("❌").css("margin-left", "10px").click(function() {
-                removeItem(index)
+        let totalPreco = 0;
 
-            })
+        $.each(carrinho, function (index, item) {
+            const listItem = $("<li>").text(
+                `${item.desc} - Preço: R$ ${item.preco.toFixed(2)}`
+            );
 
-            listItem.append(removeButton)
-            listaElement.append(list)
+            const removeButton = $("<button>")
+                .text("❌")
+                .css("margin-left", "10px")
+                .click(function () {
+                    removeItem(index);
+                });
 
-            totalPreço += item.preco
-        })
-        totalElement.text(`Total $5{totalPrco.toFixed(2)}`)
+            listItem.append(removeButton);
+            listaElement.append(listItem);
+
+            totalPreco += item.preco;
+        });
+
+        totalElement.text(`Total: R$ ${totalPreco.toFixed(2)}`);
     }
-    function removeItem(index){
 
-        carrinho.splace(index, 1)
-        localStorage.setItem("carrinho", JSON.stringify(carrinho))
-        exibirCarrinho()
+    function removeItem(index) {
+        carrinho.splice(index, 1);
+        localStorage.setItem("carrinho", JSON.stringify(carrinho));
+        exibirCarrinho();
     }
-    exibirCarrinho()
+
+    exibirCarrinho();
+});
+
+function gerar() {
+    const listaElement = document.getElementById("lista");
+    const totalElement = document.getElementById("total");
+
+    const listaClone = listaElement.cloneNode(true);
 
 
-})
-function gerar(){
-    const listaElement = document.getElementById("lista")
-    const totalElement = document.getElementById("total")
-    const listaClone = listaElement.cloneNode(true)
-    $(listaClone).find("button").remove()
-    const listaHtml = listaClone.innerHTML
-    const totalHtml = totalElement.innerHTML
+    $(listaClone).find("button").remove();
+
+    const listaHtml = listaClone.innerHTML;
+    const totalHtml = totalElement.innerHTML;
+
     const conteudoHTML = `
-    <html>
-        <head>
-            <meta charset="UTF-8">
-        </head>
-        <body>
-            <h1>PEDIDO CONFIRMADO</h1>
-            
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <title>Pedido Confirmado</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+            }
+
+            h1 {
+                color: green;
+            }
+
+            ul {
+                padding-left: 20px;
+            }
+
+            #total {
+                font-weight: bold;
+                margin-top: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>PEDIDO CONFIRMADO</h1>
+
+        <h2>Itens do Pedido:</h2>
+
+        <ul>
+            ${listaHtml}
+        </ul>
+
+        <p id="total">${totalHtml}</p>
+    </body>
+    </html>
+    `;
+
+    const novaJanela = window.open("", "_blank");
+
+    novaJanela.document.open();
+    novaJanela.document.write(conteudoHTML);
+    novaJanela.document.close();
+
+    novaJanela.print();
 }
